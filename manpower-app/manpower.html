@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Recursos Humanos</title>
+</head>
+
+<body>
+    <div id="app">
+        <nav class="navbar navbar-light bg-light">
+            <p class="navbar-brand">
+                Recursos Humanos | Bienvenido <b>{{nombre_usuario}}</b>
+            </p>
+            <button class="btn btn-danger" @click="logout()">
+                    Salir <span class="badge badge-danger"></span>
+            </button>
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 table-container">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="form-control search-input" name="" id="" aria-describedby="helpId"
+                                placeholder="Buscar..." @keyup="searchEmployee()" v-model="search">
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-primary add-btn" data-toggle="modal"
+                                data-target="#employeee-modal" @click="reset()">
+                                Agregar empleado +
+                            </button>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#id</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Apellidos</th>
+                                <th scope="col">Puesto</th>
+                                <th scope="col">CURP</th>
+                                <th scope="col">IMSS</th>
+                                <th scope="col">Clabe</th>
+                                <th scope="col">Edad</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, key) in employees" :key="item.employee_id">
+                                <th scope="row">{{key+1}}</th>
+                                <td>{{item.name}}</td>
+                                <td>{{item.last_name}}</td>
+                                <td>{{item.job}}</td>
+                                <td>{{item.curp}}</td>
+                                <td>{{item.imss}}</td>
+                                <td>{{item.clabe}}</td>
+                                <td>{{item.age}}</td>
+                                <td>
+                                    <button class="btn" @click="editEmployee(item.employee_id)">
+                                        Editar <span class="badge badge-primary"></span>
+                                    </button>
+                                    <button class="btn btn-danger" @click="deleteEmployee(item.employee_id)">
+                                        Borrar <span class="badge badge-danger"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal" tabindex="-1" role="dialog" id="employeee-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{modal_title}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="">Nombre</label>
+                                    <input type="text" class="form-control" name="" id="" aria-describedby="helpId"
+                                        placeholder="" maxlength="50" v-model="employee.name">
+                                    <small id="helpId" class="form-text text-muted">Ingresa el nombre del
+                                        empleado</small>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="">Apellidos</label>
+                                    <input type="text" class="form-control" name="" id="" aria-describedby="helpId"
+                                        placeholder="" maxlength="50" v-model="employee.last_name">
+                                    <small id="helpId" class="form-text text-muted">Ingresa los apellidos del
+                                        empleado</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="">CURP</label>
+                            <input type="text" class="form-control" name="" id="" aria-describedby="helpId"
+                                maxlength="18" minlength="18" placeholder=""
+                                onkeyup="this.value = this.value.toUpperCase(); this.value = this.value.replace(/ /g, '');"
+                                v-model="employee.curp">
+                            <small id="helpId" class="form-text text-muted">Ingresa la CURP del empleado</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="">IMSS</label>
+                            <input type="text" class="form-control" name="" id="" aria-describedby="helpId"
+                                placeholder="" maxlength="11" minlength="11"
+                                onkeyup="this.value = this.value.toUpperCase(); this.value = this.value.replace(/ /g, '');"
+                                v-model="employee.imss">
+                            <small id="helpId" class="form-text text-muted">Ingresa el numero de seguridad
+                                social</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Clabe</label>
+                            <input type="number" class="form-control" name="" id="" aria-describedby="helpId"
+                                placeholder="" maxlength="18" minlength="18"
+                                onkeyup="this.value = this.value.replace(/ /g, '');" v-model="employee.clabe">
+                            <small id="helpId" class="form-text text-muted">Ingresa la clabe interbancaria</small>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="">Edad</label>
+                                    <input type="number" class="form-control" name="" id="" aria-describedby="helpId"
+                                        placeholder="" max="100" v-model="employee.age">
+                                    <small id="helpId" class="form-text text-muted">Ingresa la edad del empleado</small>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="">Puesto</label>
+                                    <input type="text" class="form-control" name="" id="" aria-describedby="helpId"
+                                        placeholder="" maxlength="50" v-model="employee.job">
+                                    <small id="helpId" class="form-text text-muted">Ingresa el puesto que
+                                        desempeñara</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer"><br>
+                        <hr>
+                        <button type="button" class="btn btn-primary" @click="saveEmployee()">{{btn_title}}</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                    <h5>{{message}}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        body {
+            background-image: url('./images/fondo.jpg');
+            background-size: cover;
+        }
+
+        .table-container {
+            margin-top: 10vh;
+            background-color: white;
+            box-shadow: 5px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-btn {
+            float: right;
+            margin: 10px;
+        }
+
+        .search-input {
+            float: left;
+            margin: 10px;
+        }
+
+        #login-btn {
+            float: right;
+            width: 50%;
+            margin-top: 2vh;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                api_url: 'http://localhost:3000',
+                nombre_usuario: "",
+                employees: new Array(),
+                modal_title: "Agregar Empleado",
+                btn_title: "Agregar",
+                id: "",
+                search: "",
+                message: "",
+                editing: false,
+                employee: {
+                    age: "",
+                    clabe: "",
+                    curp: "",
+                    imss: "",
+                    job: "",
+                    last_name: "",
+                    name: ""
+                }
+            },
+            methods: {
+                getOptions: function () {
+                    const headers = {
+                        headers: {
+                            //'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                        }
+                    }
+                    return headers
+                },
+                getUser: function () {
+                    this.nombre_usuario = localStorage.getItem('user')
+                },
+                reset: function () {
+                    this.modal_title = "Agregar Empleado +"
+                    this.btn_title = "Agregar"
+                    this.id = ""
+                    this.message = ""
+                    this.employee = {
+                        age: "",
+                        clabe: "",
+                        curp: "",
+                        imss: "",
+                        job: "",
+                        last_name: "",
+                        name: ""
+                    }
+                },
+                getEmployees: async function () {
+                    await axios.get(this.api_url + '/employee', this.getOptions())
+                        .then(res => {
+                            this.employees = res.data.message
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        })
+                },
+                searchEmployee: async function () {
+                    await axios.get(this.api_url + '/employee/' + this.search, this.getOptions())
+                        .then(res => {
+                            this.employees = res.data.message
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        })
+                },
+                saveEmployee: async function () {
+                    if (this.id != "") {
+                        await axios.put(this.api_url + '/employee/' + this.id, this.employee, this.getOptions())
+                            .then(res => {
+                                this.message = "Empleado actualizado correctamente ✔"
+                                this.getEmployees()
+                            })
+                            .catch(err => {
+                                this.message = "Ocurrio un error, revise los campos e intente nuevamente ⚠"
+                            })
+                    } else {
+                        await axios.post(this.api_url + '/employee', this.employee, this.getOptions())
+                            .then(res => {
+                                this.message = "Empleado agregado correctamente ✔"
+                                this.getEmployees()
+                            })
+                            .catch(err => {
+                                this.message = "Ocurrio un error, revise los campos e intente nuevamente ⚠"
+                            })
+                    }
+                },
+                editEmployee: async function (id) {
+                    this.btn_title = "Actualizar"
+                    this.modal_title = "Editar Usuario"
+                    this.id = id
+                    axios.get(this.api_url + '/employee/' + id, this.getOptions())
+                        .then(res => {
+                            this.employee = res.data.message[0]
+                            $('#employeee-modal').modal('show')
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        })
+                },
+                deleteEmployee: async function (id) {
+                    axios.delete(this.api_url + '/employee/' + id, this.getOptions())
+                        .then(res => {
+                            this.message = "Empleado actualizado correctamente ✔"
+                            this.getEmployees()
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        })
+                },
+                logout: async function () {
+                    localStorage.removeItem('token')
+                    localStorage.removeItem('token')
+                    window.location.href = 'index.html'
+                },
+            },
+            mounted: function () {
+                if (localStorage.getItem('token')) {
+                    token = localStorage.getItem('token')
+                    this.getUser()
+                    this.getEmployees()
+                } else {
+                    window.location.href = 'index.html'
+                }
+
+            }
+        })
+    </script>
+</body>
+
+</html>

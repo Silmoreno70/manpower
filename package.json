@@ -1,0 +1,33 @@
+{
+  "name": "manpower",
+  "version": "1.0.0",
+  "description": "An API REST of A human resources system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Silmoreno70/manpower.git"
+  },
+  "keywords": [
+    "api",
+    "rest",
+    "express",
+    "node"
+  ],
+  "author": "Silvestre Moreno",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Silmoreno70/manpower/issues"
+  },
+  "homepage": "https://github.com/Silmoreno70/manpower#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.4"
+  }
+}
