@@ -36,9 +36,9 @@ user.post('/login', async (req, res, next) => {
     const { email, password } = req.body
     const query = `SELECT * FROM user WHERE email = '${email}' AND password = '${password}'`
     const rows = await db.query(query)
-
+    console.log(rows.length);
     if (email && password) {
-        if (rows.length == 1) {
+        if (rows.length != 0) {
             const token = jwt.sign({
                 user_id: rows[0].user_id,
                 email: rows[0].email
@@ -50,8 +50,8 @@ user.post('/login', async (req, res, next) => {
                 user: `${rows[0].name}  ${rows[0].last_name}`
             })
         } else {
-            res.status(200).json({
-                code: 200,
+            res.status(500).json({
+                code: 500,
                 message: 'Usuario y/o contraseña incorrectos',
                 auth: false
             })

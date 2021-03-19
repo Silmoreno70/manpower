@@ -3,8 +3,6 @@ window.onload = init
 function init() {
     if (localStorage.getItem('token')) {
         window.location.href = 'manpower.html'
-    } else {
-        window.location.href = 'index.html'
     }
     document.querySelector('#login-btn').addEventListener('click', login)
 }
@@ -30,6 +28,7 @@ function login() {
         }
 
     }).catch(err => {
+        alert('Usuario y/o contraseña incorrectos 😕')
         console.error(err);
     })
 }
